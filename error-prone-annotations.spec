@@ -59,14 +59,40 @@ text, n = re.subn(
 )
 if n != 1:
     raise SystemExit(f"bnd {n}")
-old9 = "              <source>9</source>\n              <target>9</target>\n              <release>9</release>"
-new9 = "              <release>9</release>"
-if old9 not in text:
-    raise SystemExit("java 9 levels missing")
-text = text.replace(old9, new9, 1)
+# The Java 9 execution has a goal and no phase, so Maven never runs it.
+# default-compile is source 8 and still compiles module-info.java.
+java9 = """<execution>
+            <id>compile-java9</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <release>9</release>
+              <compileSourceRoots>
+                <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+              </compileSourceRoots>
+              <multiReleaseOutput>true</multiReleaseOutput>
+            </configuration>
+          </execution>"""
+text, n = re.subn(
+    r"<execution>\s*<id>compile-java9</id>.*?</execution>",
+    java9,
+    text,
+    count=1,
+    flags=re.S,
+)
+if n != 1:
+    raise SystemExit(f"java9 execution {n}")
 Path("pom.xml").write_text(text)
 shutil.rmtree("src", ignore_errors=True)
 shutil.move("annotations/src", "src")
+module_info = Path("src/main/java/module-info.java")
+if not module_info.is_file():
+    raise SystemExit("module-info missing")
+java9_dir = Path("src/main/java9")
+java9_dir.mkdir()
+module_info.rename(java9_dir / "module-info.java")
 PY
 
 %files -f .mfiles
