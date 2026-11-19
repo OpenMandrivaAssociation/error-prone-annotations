@@ -1,6 +1,6 @@
 Name:		error-prone-annotations
-Version:	2.52.0
-Release:	2
+Version:	2.53.0
+Release:	1
 Summary:	Annotations for Error Prone static analysis
 Group:		Development/Java
 License:	ASL 2.0
@@ -19,9 +19,9 @@ BuildOption(install):	--file-name error_prone_annotations --link %{name}
 %description
 Error Prone annotations mark APIs for the Error Prone checker, including
 CheckReturnValue, Immutable, and GuardedBy. This package is the
-annotation jar from 2.52.0. The checker itself is not packaged. The jar
+annotation jar from 2.53.0. The checker itself is not packaged. The jar
 is multi-release and includes module-info. Gradle 9.9.1 strictly pins
-2.50.0, so that jar is installed beside 2.52.0.
+2.50.0, so that jar is installed beside 2.53.0.
 
 %prep
 %autosetup -n error-prone-%{version}
@@ -132,7 +132,7 @@ sysjar install --buildroot %{buildroot} \
 	--artifact ep250/error_prone_annotations.pom:ep250/error_prone_annotations.jar \
 	--file-name error_prone_annotations-2.50.0 \
 	--filelist .mfiles250
-# 2.52.0 owns error_prone_annotations.sysjar. 2.50.0 keeps a second index.
+# 2.53.0 owns error_prone_annotations.sysjar. 2.50.0 keeps a second index.
 /bin/mv %{buildroot}/usr/share/sysjar/index/com.google.errorprone/error_prone_annotations.sysjar \
 	%{buildroot}/usr/share/sysjar/index/com.google.errorprone/error_prone_annotations-2.50.0.sysjar
 sed -i 's|/usr/share/sysjar/index/com.google.errorprone/error_prone_annotations\.sysjar|/usr/share/sysjar/index/com.google.errorprone/error_prone_annotations-2.50.0.sysjar|' .mfiles250
@@ -161,8 +161,8 @@ public class EpSmoke {
 EOF
 "$JAVA_HOME/bin/javac" --release 8 -encoding UTF-8 -Xlint:-options \
 	-cp %{buildroot}%{_javadir}/error_prone_annotations.jar EpSmoke.java
-"$JAVA_HOME/bin/java" -cp "%{buildroot}%{_javadir}/error_prone_annotations.jar:." EpSmoke ep252_ok | tee check252.log
-grep -F -q 'ep252_ok CheckReturnValue' check252.log
+"$JAVA_HOME/bin/java" -cp "%{buildroot}%{_javadir}/error_prone_annotations.jar:." EpSmoke ep253_ok | tee check253.log
+grep -F -q 'ep253_ok CheckReturnValue' check253.log
 "$JAVA_HOME/bin/javac" --release 8 -encoding UTF-8 -Xlint:-options \
 	-cp %{buildroot}%{_javadir}/error_prone_annotations-2.50.0.jar EpSmoke.java
 "$JAVA_HOME/bin/java" -cp "%{buildroot}%{_javadir}/error_prone_annotations-2.50.0.jar:." EpSmoke ep250_ok | tee check250.log
